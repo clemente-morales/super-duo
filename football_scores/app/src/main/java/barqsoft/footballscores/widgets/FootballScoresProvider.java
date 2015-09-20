@@ -5,11 +5,18 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import barqsoft.footballscores.DatabaseContract;
 import barqsoft.footballscores.MainActivity;
 import barqsoft.footballscores.R;
+import barqsoft.footballscores.Utilies;
+import barqsoft.footballscores.scoresAdapter;
 
 /**
  * Created by clerks on 9/18/15.
@@ -33,9 +40,21 @@ public class FootballScoresProvider extends AppWidgetProvider {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.football_score_widget);
             //views.setOnClickPendingIntent(R.id.home_crest, pendingIntent);
 
-            views.setTextViewText(R.id.homeNameTextView, "Barcelona");
-            views.setTextViewText(R.id.scoreTextView, "2 : 0");
-            views.setTextViewText(R.id.awayNameTextView, "Real Madrid");
+            Date fragmentdate = new Date(System.currentTimeMillis());
+            SimpleDateFormat mformat = new SimpleDateFormat("yyyy-MM-dd");
+            String[] selectionArgs = new String[1];
+            selectionArgs[0] = mformat.format(fragmentdate);
+
+            Cursor cursor = context.getContentResolver().query(DatabaseContract.scores_table.buildScoreWithDate(),
+                    null, null, selectionArgs, null);
+
+            while (cursor.moveToNext()) {
+                views.setTextViewText(R.id.homeNameTextView, cursor.getString(scoresAdapter.COL_HOME));
+                String score = Utilies.getScores(cursor.getInt(scoresAdapter.COL_HOME_GOALS), cursor.getInt(scoresAdapter.COL_AWAY_GOALS));
+                views.setTextViewText(R.id.scoreTextView, score);
+                views.setTextViewText(R.id.awayNameTextView, cursor.getString(scoresAdapter.COL_AWAY));
+            }
+            cursor.close();
 
             Log.d(TAG, "Loading widget");
 
