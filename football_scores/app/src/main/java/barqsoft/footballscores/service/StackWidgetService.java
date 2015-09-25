@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -17,6 +18,7 @@ import barqsoft.footballscores.R;
 import barqsoft.footballscores.Utilies;
 import barqsoft.footballscores.models.WidgetItem;
 import barqsoft.footballscores.scoresAdapter;
+import barqsoft.footballscores.widgets.FootballScoresWidgetProvider;
 
 /**
  * Created by clerks on 9/20/15.
@@ -87,6 +89,19 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         String score = Utilies.getScores(item.getHomeGoals(), item.getAwayGoals());
         views.setTextViewText(R.id.scoreTextView, score);
         views.setTextViewText(R.id.awayNameTextView, item.getAway());
+
+        // Next, set a fill-intent, which will be used to fill in the pending intent template
+        // that is set on the collection view in StackWidgetProvider.
+        Bundle extras = new Bundle();
+        extras.putInt(FootballScoresWidgetProvider.EXTRA_MATCH_ID, position);
+
+        Intent fillInIntent = new Intent();
+        fillInIntent.putExtras(extras);
+
+        // Make it possible to distinguish the individual on-click
+        // action of a given item
+        views.setOnClickFillInIntent(R.id.homeNameTextView, fillInIntent);
+
 
         return views;
     }
