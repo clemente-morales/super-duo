@@ -30,7 +30,8 @@ import barqsoft.footballscores.R;
  */
 public class myFetchService extends IntentService
 {
-    public static final String LOG_TAG = "myFetchService";
+    public static final String LOG = "myFetchService";
+
     public myFetchService()
     {
         super("myFetchService");
@@ -39,13 +40,13 @@ public class myFetchService extends IntentService
     @Override
     protected void onHandleIntent(Intent intent)
     {
-        getData("n2");
-        getData("p2");
+        getData("n2", getApplicationContext());
+        getData("p2", getApplicationContext());
 
         return;
     }
 
-    private void getData (String timeFrame)
+    public static void getData(String timeFrame, Context context)
     {
         //Creating fetch URL
         final String BASE_URL = "http://api.football-data.org/alpha/fixtures"; //Base URL
@@ -54,7 +55,7 @@ public class myFetchService extends IntentService
 
         Uri fetch_build = Uri.parse(BASE_URL).buildUpon().
                 appendQueryParameter(QUERY_TIME_FRAME, timeFrame).build();
-        //Log.v(LOG_TAG, "The url we are looking at is: "+fetch_build.toString()); //log spam
+        //Log.v(LOG, "The url we are looking at is: "+fetch_build.toString()); //log spam
         HttpURLConnection m_connection = null;
         BufferedReader reader = null;
         String JSON_data = null;
@@ -64,7 +65,7 @@ public class myFetchService extends IntentService
             m_connection = (HttpURLConnection) fetch.openConnection();
             m_connection.setRequestMethod("GET");
             // TODO extract api key from assets
-            m_connection.addRequestProperty("X-Auth-Token",getString(R.string.api_key));
+            m_connection.addRequestProperty("X-Auth-Token",context.getString(R.string.api_key));
             m_connection.connect();
 
             // Read the input stream into a String
@@ -91,7 +92,7 @@ public class myFetchService extends IntentService
         }
         catch (Exception e)
         {
-            Log.e(LOG_TAG,"Exception here" + e.getMessage());
+            Log.e(LOG,"Exception here" + e.getMessage());
         }
         finally {
             if(m_connection != null)
@@ -105,34 +106,35 @@ public class myFetchService extends IntentService
                 }
                 catch (IOException e)
                 {
-                    Log.e(LOG_TAG,"Error Closing Stream");
+                    Log.e(LOG,"Error Closing Stream");
                 }
             }
         }
         try {
+            Log.d(LOG, "Json received "+JSON_data);
             if (JSON_data != null) {
                 //This bit is to check if the data contains any matches. If not, we call processJson on the dummy data
                 JSONArray matches = new JSONObject(JSON_data).getJSONArray("fixtures");
                 if (matches.length() == 0) {
                     //if there is no data, call the function on dummy data
                     //this is expected behavior during the off season.
-                    processJSONdata(getString(R.string.dummy_data), getApplicationContext(), false);
+                    processJSONdata(context.getString(R.string.dummy_data), context, false);
                     return;
                 }
 
 
-                processJSONdata(JSON_data, getApplicationContext(), true);
+                processJSONdata(JSON_data, context, true);
             } else {
                 //Could not Connect
-                Log.d(LOG_TAG, "Could not connect to server.");
+                Log.d(LOG, "Could not connect to server.");
             }
         }
         catch(Exception e)
         {
-            Log.e(LOG_TAG,e.getMessage());
+            Log.e(LOG,e.getMessage());
         }
     }
-    private void processJSONdata (String JSONdata,Context mContext, boolean isReal)
+    private static void processJSONdata (String JSONdata,Context context, boolean isReal)
     {
         //JSON data
         // This set of league codes is for the 2015/2016 season. In fall of 2016, they will need to
@@ -229,8 +231,8 @@ public class myFetchService extends IntentService
                     }
                     catch (Exception e)
                     {
-                        Log.d(LOG_TAG, "error here!");
-                        Log.e(LOG_TAG,e.getMessage());
+                        Log.d(LOG, "error here!");
+                        Log.e(LOG,e.getMessage());
                     }
                     Home = match_data.getString(HOME_TEAM);
                     Away = match_data.getString(AWAY_TEAM);
@@ -249,13 +251,13 @@ public class myFetchService extends IntentService
                     match_values.put(DatabaseContract.scores_table.MATCH_DAY,match_day);
                     //log spam
 
-                    //Log.v(LOG_TAG,match_id);
-                    //Log.v(LOG_TAG,mDate);
-                    //Log.v(LOG_TAG,mTime);
-                    //Log.v(LOG_TAG,Home);
-                    //Log.v(LOG_TAG,Away);
-                    //Log.v(LOG_TAG,Home_goals);
-                    //Log.v(LOG_TAG,Away_goals);
+                    //Log.v(LOG,match_id);
+                    //Log.v(LOG,mDate);
+                    //Log.v(LOG,mTime);
+                    //Log.v(LOG,Home);
+                    //Log.v(LOG,Away);
+                    //Log.v(LOG,Home_goals);
+                    //Log.v(LOG,Away_goals);
 
                     values.add(match_values);
                 }
@@ -263,14 +265,14 @@ public class myFetchService extends IntentService
             int inserted_data = 0;
             ContentValues[] insert_data = new ContentValues[values.size()];
             values.toArray(insert_data);
-            inserted_data = mContext.getContentResolver().bulkInsert(
+            inserted_data = context.getContentResolver().bulkInsert(
                     DatabaseContract.BASE_CONTENT_URI,insert_data);
 
-            //Log.v(LOG_TAG,"Succesfully Inserted : " + String.valueOf(inserted_data));
+            //Log.v(LOG,"Succesfully Inserted : " + String.valueOf(inserted_data));
         }
         catch (JSONException e)
         {
-            Log.e(LOG_TAG,e.getMessage());
+            Log.e(LOG,e.getMessage());
         }
 
     }

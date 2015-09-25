@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="barqsoft.footballscores" >
+    package="barqsoft.footballscores">
 
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission
         android:name="android.permission.INTERNET"
         android:maxSdkVersion="22" />
+
+    <uses-permission
+        android:name="android.permission.READ_SYNC_SETTINGS"/>
+    <uses-permission
+        android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission
+        android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:name=".FootballscoresApplication"
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,24 +38,54 @@
         <activity
             android:name=".AboutActivity"
             android:label="About"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="barqsoft.footballscores.MainActivity" />
         </activity>
         <service android:name=".service.myFetchService" />
-        
+
         <receiver android:name=".widgets.FootballScoresProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
+            <meta-data
+                android:name="android.appwidget.provider"
                 android:resource="@xml/football_score_appwidget_info"></meta-data>
         </receiver>
 
-        <service android:name=".service.StackWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS"
-            android:exported="false" />
+        <service
+            android:name=".service.StackWidgetService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <service android:name=".service.AuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"></action>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator"></meta-data>
+        </service>
+
+        <service
+            android:name=".service.SyncService"
+            android:exported="true"
+            android:process=":sync">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+        <receiver android:name=".receivers.AlarmReceiver"></receiver>
+
+        <receiver android:name=".receivers.DeviceBootReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

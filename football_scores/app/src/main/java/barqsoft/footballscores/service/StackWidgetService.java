@@ -29,7 +29,7 @@ public class StackWidgetService extends RemoteViewsService {
 }
 
 class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
-    private static final int mCount = 10;
+
     private List<WidgetItem> mWidgetItems = new ArrayList<WidgetItem>();
     private Context mContext;
     private int mAppWidgetId;
@@ -76,7 +76,7 @@ class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     }
 
     public int getCount() {
-        return mCount;
+        return mWidgetItems.size();
     }
 
     public RemoteViews getViewAt(int position) {

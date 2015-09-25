@@ -80,7 +80,7 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
             i++;
             cursor.moveToNext();
         }
-        //Log.v(FetchScoreTask.LOG_TAG,"Loader query: " + String.valueOf(i));
+        //Log.v(FetchScoreTask.LOG,"Loader query: " + String.valueOf(i));
         mAdapter.swapCursor(cursor);
         //mAdapter.notifyDataSetChanged();
     }

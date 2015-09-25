@@ -1,5 +1,8 @@
 package barqsoft.footballscores;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -14,10 +17,24 @@ public class MainActivity extends ActionBarActivity
     public static String LOG_TAG = "MainActivity";
     private final String save_tag = "Save Test";
     private PagerFragment my_main;
+
+
+    // An account type, in the form of a domain name
+    public static final String ACCOUNT_TYPE = "barqsoft.footballscores.datasync";
+    // The account name
+    public static final String ACCOUNT = "dummyaccount";
+    // Instance fields
+    Account mAccount;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Create the dummy account
+        mAccount = CreateSyncAccount(this);
+
         Log.d(LOG_TAG, "Reached MainActivity onCreate");
         if (savedInstanceState == null) {
             my_main = new PagerFragment();
@@ -75,5 +92,25 @@ public class MainActivity extends ActionBarActivity
         selected_match_id = savedInstanceState.getInt("Selected_match");
         my_main = (PagerFragment) getSupportFragmentManager().getFragment(savedInstanceState,"my_main");
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    /**
+     * Create a new dummy account for the sync adapter
+     *
+     * @param context The application context
+     */
+    public static Account CreateSyncAccount(Context context) {
+        // Create the account type and default account
+        Account newAccount = new Account(
+                ACCOUNT, ACCOUNT_TYPE);
+        // Get an instance of the Android account manager
+        AccountManager accountManager =
+                (AccountManager) context.getSystemService(
+                        ACCOUNT_SERVICE);
+
+        accountManager.addAccountExplicitly(newAccount, null, null);
+
+
+        return newAccount;
     }
 }
