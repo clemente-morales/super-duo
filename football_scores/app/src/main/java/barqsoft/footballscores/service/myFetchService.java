@@ -19,17 +19,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 import java.util.TimeZone;
 import java.util.Vector;
 
 import barqsoft.footballscores.DatabaseContract;
 import barqsoft.footballscores.R;
+import barqsoft.footballscores.Utilies;
 
 /**
  * Created by yehya khaled on 3/2/2015.
  */
 public class myFetchService extends IntentService
 {
+    public static final String FOOTBALL_SCORES_API_KEY_PROPERTY = "football_scores_api_key";
     public static final String LOG = "myFetchService";
 
     public myFetchService()
@@ -63,7 +66,7 @@ public class myFetchService extends IntentService
             URL fetch = new URL(fetch_build.toString());
             m_connection = (HttpURLConnection) fetch.openConnection();
             m_connection.setRequestMethod("GET");
-            m_connection.addRequestProperty("X-Auth-Token",context.getString(R.string.api_key));
+            m_connection.addRequestProperty("X-Auth-Token",getKey(context));
             m_connection.connect();
 
             // Read the input stream into a String
@@ -254,6 +257,11 @@ public class myFetchService extends IntentService
             Log.e(LOG,e.getMessage());
         }
 
+    }
+
+    private static String getKey(Context context) {
+        Properties properties = Utilies.getProperties(context);
+        return properties.getProperty(FOOTBALL_SCORES_API_KEY_PROPERTY);
     }
 }
 
