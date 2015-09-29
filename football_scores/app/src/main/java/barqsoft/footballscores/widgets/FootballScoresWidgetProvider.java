@@ -24,13 +24,7 @@ public class FootballScoresWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        AppWidgetManager mgr = AppWidgetManager.getInstance(context);
         if (intent.getAction().equals(OPEN_ACTIVITY_ACTION)) {
-            int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
-                    AppWidgetManager.INVALID_APPWIDGET_ID);
-            int viewIndex = intent.getIntExtra(EXTRA_MATCH_ID, 0);
-
-            Log.d(TAG, "An item has been clicked");
             Intent intent1 = new Intent(context, MainActivity.class);
             intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent1);

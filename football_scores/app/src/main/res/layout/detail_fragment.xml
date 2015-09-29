@@ -5,7 +5,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="@dimen/score_layout_marginTop">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="@dimen/score_frame_layout_marginTop">
         <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,8 +37,8 @@
         android:text="@string/share_text"
         android:id="@+id/share_button"
         android:drawableLeft="@android:drawable/ic_menu_share"
-        android:paddingLeft="120dp" android:paddingStart="120dp"
-        android:paddingRight="120dp" android:paddingEnd="120dp"
+        android:paddingLeft="@dimen/score_layout_paddingLeft" android:paddingStart="@dimen/score_layout_paddingLeft"
+        android:paddingRight="@dimen/score_layout_paddingRight" android:paddingEnd="@dimen/score_layout_paddingRight"
             android:contentDescription="@string/share_score_description"/>
     </FrameLayout>
 

@@ -11,4 +11,8 @@
 
     <dimen name="TeamNamesWidget">14sp</dimen>
     <dimen name="ScoreWidget">17sp</dimen>
+    <dimen name="score_layout_marginTop">20dp</dimen>
+    <dimen name="score_frame_layout_marginTop">20dp</dimen>
+    <dimen name="score_layout_paddingLeft">120dp</dimen>
+    <dimen name="score_layout_paddingRight">120dp</dimen>
 </resources>
