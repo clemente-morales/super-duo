@@ -96,19 +96,13 @@ public class ScoresProvider extends ContentProvider
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
         Cursor retCursor;
-        //Log.v(FetchScoreTask.LOG,uri.getPathSegments().toString());
         int match = match_uri(uri);
-        //Log.v(FetchScoreTask.LOG,SCORES_BY_LEAGUE);
-        //Log.v(FetchScoreTask.LOG,selectionArgs[0]);
-        //Log.v(FetchScoreTask.LOG,String.valueOf(match));
         switch (match)
         {
             case MATCHES: retCursor = mOpenHelper.getReadableDatabase().query(
                     DatabaseContract.SCORES_TABLE,
                     projection,null,null,null,null,sortOrder); break;
             case MATCHES_WITH_DATE:
-                    //Log.v(FetchScoreTask.LOG,selectionArgs[1]);
-                    //Log.v(FetchScoreTask.LOG,selectionArgs[2]);
                     retCursor = mOpenHelper.getReadableDatabase().query(
                     DatabaseContract.SCORES_TABLE,
                     projection,SCORES_BY_DATE,selectionArgs,null,null,sortOrder); break;

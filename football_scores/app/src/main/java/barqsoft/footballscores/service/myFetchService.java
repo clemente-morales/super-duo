@@ -51,20 +51,18 @@ public class myFetchService extends IntentService
         //Creating fetch URL
         final String BASE_URL = "http://api.football-data.org/alpha/fixtures"; //Base URL
         final String QUERY_TIME_FRAME = "timeFrame"; //Time Frame parameter to determine days
-        //final String QUERY_MATCH_DAY = "matchday";
 
         Uri fetch_build = Uri.parse(BASE_URL).buildUpon().
                 appendQueryParameter(QUERY_TIME_FRAME, timeFrame).build();
-        //Log.v(LOG, "The url we are looking at is: "+fetch_build.toString()); //log spam
+
         HttpURLConnection m_connection = null;
         BufferedReader reader = null;
         String JSON_data = null;
-        //Opening Connection
+
         try {
             URL fetch = new URL(fetch_build.toString());
             m_connection = (HttpURLConnection) fetch.openConnection();
             m_connection.setRequestMethod("GET");
-            // TODO extract api key from assets
             m_connection.addRequestProperty("X-Auth-Token",context.getString(R.string.api_key));
             m_connection.connect();
 
@@ -72,20 +70,15 @@ public class myFetchService extends IntentService
             InputStream inputStream = m_connection.getInputStream();
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
-                // Nothing to do.
                 return;
             }
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
             String line;
             while ((line = reader.readLine()) != null) {
-                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                // But it does make debugging a *lot* easier if you print out the completed
-                // buffer for debugging.
                 buffer.append(line + "\n");
             }
             if (buffer.length() == 0) {
-                // Stream was empty.  No point in parsing.
                 return;
             }
             JSON_data = buffer.toString();
@@ -113,11 +106,8 @@ public class myFetchService extends IntentService
         try {
             Log.d(LOG, "Json received "+JSON_data);
             if (JSON_data != null) {
-                //This bit is to check if the data contains any matches. If not, we call processJson on the dummy data
                 JSONArray matches = new JSONObject(JSON_data).getJSONArray("fixtures");
                 if (matches.length() == 0) {
-                    //if there is no data, call the function on dummy data
-                    //this is expected behavior during the off season.
                     processJSONdata(context.getString(R.string.dummy_data), context, false);
                     return;
                 }
@@ -249,15 +239,6 @@ public class myFetchService extends IntentService
                     match_values.put(DatabaseContract.scores_table.AWAY_GOALS_COL,Away_goals);
                     match_values.put(DatabaseContract.scores_table.LEAGUE_COL,League);
                     match_values.put(DatabaseContract.scores_table.MATCH_DAY,match_day);
-                    //log spam
-
-                    //Log.v(LOG,match_id);
-                    //Log.v(LOG,mDate);
-                    //Log.v(LOG,mTime);
-                    //Log.v(LOG,Home);
-                    //Log.v(LOG,Away);
-                    //Log.v(LOG,Home_goals);
-                    //Log.v(LOG,Away_goals);
 
                     values.add(match_values);
                 }
@@ -267,8 +248,6 @@ public class myFetchService extends IntentService
             values.toArray(insert_data);
             inserted_data = context.getContentResolver().bulkInsert(
                     DatabaseContract.BASE_CONTENT_URI,insert_data);
-
-            //Log.v(LOG,"Succesfully Inserted : " + String.valueOf(inserted_data));
         }
         catch (JSONException e)
         {
