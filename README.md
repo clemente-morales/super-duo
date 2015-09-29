@@ -9,4 +9,4 @@ You will need to create an account in football-data web site in order to request
 
 http://api.football-data.org
 
-When you have your API key, put it in the configuration.properties
+When you have your API key, put it in the configuration.properties that is located in /football_scores/app/src/main/assets/
